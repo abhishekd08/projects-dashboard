@@ -1,13 +1,13 @@
-# Jira Clone Dashboard
+# Tasks Dashboard
 
 ## Overview
-This is a simplified Jira-like board web application with columns "Todo", "In Process", "Under Testing", and "Done". It supports draggable task cards, multiple tags with global filtering, date-time pickers for timestamps, and data persistence using a local Node.js backend with JSON file storage.
+Lightweight Jira‑style board with four columns (Todo, In Process, Under Testing, Done). Features draggable cards, global tag filtering, a simple create/edit modal, and a Node.js backend that persists to a JSON file.
 
 ## Requirements
 - Node.js (version 16 or newer recommended)
 - npm (comes with Node.js)
 
-## Setup Instructions
+## Setup
 
 1. Clone or download this project folder.
 
@@ -16,24 +16,44 @@ This is a simplified Jira-like board web application with columns "Todo", "In Pr
    - Navigate to `/backend` folder
    - Run `npm install` to install dependencies
    - (Optional) Set a custom port with `PORT=4000 npm start`
-   - Run `npm start` to start the backend server on `http://localhost:3000` (or your `PORT`)
+   - Run `npm start` to start the backend server at `http://localhost:3000` (or your `PORT`)
 
 3. Frontend setup:
-   - Open `/frontend/index.html` in a modern web browser (Chrome, Firefox, Edge)
-   - The frontend communicates with the localhost backend. If you changed the backend port, update `API_URL` in `frontend/app.js:1` accordingly.
+   - Open `frontend/index.html` in a modern browser (Chrome, Firefox, Edge)
+   - If you changed the backend port, update `API_URL` in `frontend/app.js:1`.
+## Current Functionality
+- Board
+  - Four fixed columns side‑by‑side: Todo, In Process, Under Testing, Done
+  - Drag and drop between columns
+  - Moving a task to Done auto‑sets its end time to the current date/time
 
-## Features
-- Four draggable columns representing task status.
-- Add, edit, and view tasks in two viewing modes.
-- Each task supports title, description, priority (low/medium/high), start/end timestamps (date and time), status, and multiple tags.
-- Global tag filtering with multi-select dropdown.
-- Responsive design with a clean white background and shades of green, blue, and red.
-- Data persistence in a local JSON file on backend.
+- Cards
+  - Compact view shows: title, up to two lines of description, priority icon (top‑right)
+  - Left color stripe indicates priority (green/blue/red)
+  - “Completed …” footnote shows only when in Done
+  - Click a card to open a detail modal (no inline expansion)
+
+- Create/Edit Modal
+  - Open via the global “+ Add Task” (top‑right) or by clicking a card
+  - Create defaults: Priority = Low, Status = Todo, Start date = today, Start time = now
+  - Only Title is required on the frontend (backend validates fields)
+  - Start time uses separate date and time inputs (Pikaday date + native time)
+  - End time is read‑only and appears after a task moves to Done
+  - Press ESC to close the modal
+
+- Filtering
+  - Filter button opens a modal with a multi‑select Tags control
+  - Clear Filter repopulates tag options immediately
+
+- Styling and UX
+  - Standard theme with white surfaces, near‑black text, and green accents
+  - Subtle animations for buttons, modal open/close, hover, and card drop pulse
 
 ## Notes
-- No authentication is implemented; it is assumed to run locally.
-- Data is stored persistently in `backend/tasks.json`.
+- Run backend first, then open the frontend HTML file.
+- Data persists to `backend/tasks.json`.
 - Backend uses Express with simple REST API.
+- Designed for single‑machine/local use (no auth).
 
 ## License
 MIT License
