@@ -1,5 +1,5 @@
 {
-  "name": "jira-clone-backend",
+  "name": "tasks-dashoard",
   "version": "1.0.0",
   "description": "Simple JSON backend for Jira clone dashboard",
   "main": "server.js",
