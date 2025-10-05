@@ -55,5 +55,5 @@ Lightweight Jira‑style board with four columns (Todo, In Process, Under Testin
 - Backend uses Express with simple REST API.
 - Designed for single‑machine/local use (no auth).
 
-## License
-MIT License
+
+
