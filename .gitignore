@@ -7,3 +7,4 @@ npm-debug.log*
 
 # App data
 backend/tasks.json
+backend/projects.json

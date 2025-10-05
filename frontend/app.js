@@ -1,4 +1,5 @@
-const API_URL = 'http://localhost:3000/api/tasks';
+const API_BASE = 'http://localhost:3000/api';
+const API_URL = `${API_BASE}/tasks`;
 
 let tasks = [];
 let filterTags = new Set();
@@ -75,6 +76,13 @@ function priorityGlyph(priority) {
 let draggedCard = null;
 
 function dragStart(e) {
+  // Prevent dragging tasks that are already done
+  const id = this.dataset.id;
+  const t = tasks.find(x => x.id === id);
+  if (t && t.status === 'done') {
+    e.preventDefault();
+    return;
+  }
   draggedCard = this;
   e.dataTransfer.effectAllowed = 'move';
   setTimeout(() => this.style.display = 'none', 0); // hide original card
@@ -95,13 +103,26 @@ function drop(e) {
   if (!draggedCard) return;
   const status = this.dataset.status;
   const taskId = draggedCard.dataset.id;
+  // If source was done, do nothing
+  const src = tasks.find(t => t.id === taskId);
+  if (src && src.status === 'done') return;
   updateTaskStatus(taskId, status);
+}
+
+function getProjectId() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('project');
+}
+
+const CURRENT_PROJECT_ID = getProjectId();
+if (!CURRENT_PROJECT_ID) {
+  window.location.replace('projects.html');
 }
 
 // Fetch all tasks from backend
 async function fetchTasks() {
   try {
-    const resp = await fetch(API_URL);
+    const resp = await fetch(`${API_BASE}/projects/${encodeURIComponent(CURRENT_PROJECT_ID)}/tasks`);
     tasks = await resp.json();
     renderBoard();
     updateTagFilterOptions();
@@ -165,6 +186,8 @@ function openTaskModal(task = null) {
     const t = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
     if (startDateInput) startDateInput.value = d;
     if (startTimeInput) startTimeInput.value = t;
+    const titleEl = document.getElementById('task-title');
+    if (titleEl) setTimeout(() => titleEl.focus(), 0);
   }
 }
 
@@ -214,7 +237,7 @@ async function saveTaskToBackend(task) {
       const resp = await fetch(`${API_URL}/${encodeURIComponent(task.id)}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(task),
+        body: JSON.stringify({ ...task, projectId: CURRENT_PROJECT_ID }),
       });
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({}));
@@ -230,7 +253,7 @@ async function saveTaskToBackend(task) {
       const resp = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(task),
+        body: JSON.stringify({ ...task, projectId: CURRENT_PROJECT_ID }),
       });
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({}));

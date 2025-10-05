@@ -19,9 +19,15 @@ Lightweight Jira‑style board with four columns (Todo, In Process, Under Testin
    - Run `npm start` to start the backend server at `http://localhost:3000` (or your `PORT`)
 
 3. Frontend setup:
-   - Open `frontend/index.html` in a modern browser (Chrome, Firefox, Edge)
-   - If you changed the backend port, update `API_URL` in `frontend/app.js:1`.
+   - Open `frontend/projects.html` to manage projects (Chrome, Firefox, Edge)
+   - Click a project to open its Tasks board
+   - If you changed the backend port, update the base API in `frontend/app.js` and `frontend/projects.js`.
 ## Current Functionality
+- Projects
+  - All projects view with create/delete (unique title)
+  - Delete requires typing the exact project title (case-sensitive) and cascades deletion of its tasks
+  - Click a project card to open its task board (swipe-left animation)
+
 - Board
   - Four fixed columns side‑by‑side: Todo, In Process, Under Testing, Done
   - Drag and drop between columns
@@ -51,9 +57,8 @@ Lightweight Jira‑style board with four columns (Todo, In Process, Under Testin
 
 ## Notes
 - Run backend first, then open the frontend HTML file.
-- Data persists to `backend/tasks.json`.
+- Data persists to `backend/tasks.json` and `backend/projects.json`.
 - Backend uses Express with simple REST API.
 - Designed for single‑machine/local use (no auth).
-
 
 

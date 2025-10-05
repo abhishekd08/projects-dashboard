@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Projects</title>
+  <link rel="stylesheet" href="projects.css" />
+</head>
+<body>
+  <header>
+    <div class="header-bar">
+      <h1>Projects</h1>
+      <div class="header-actions">
+        <button id="new-project-btn" class="action-btn primary">+ New Project</button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section id="projects-list" class="list"></section>
+  </main>
+
+  <!-- New project modal -->
+  <div id="project-modal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button" id="close-project-modal">&times;</span>
+      <h2>New Project</h2>
+      <form id="project-form">
+        <label for="project-title">Title</label>
+        <input type="text" id="project-title" required />
+        <button type="submit" class="primary">Create</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete confirmation modal -->
+  <div id="delete-modal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button" id="close-delete-modal">&times;</span>
+      <h2>Delete Project</h2>
+      <p id="delete-msg"></p>
+      <input type="text" id="confirm-title" placeholder="Type project title to confirm" />
+      <button id="confirm-delete" class="danger">Delete</button>
+    </div>
+  </div>
+
+  <script src="projects.js"></script>
+  </body>
+  </html>
+
