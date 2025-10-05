@@ -1,2 +1,9 @@
+# Node artifacts
 node_modules/
+npm-debug.log*
 
+# Editor/OS
+.DS_Store
+
+# App data
+backend/tasks.json
