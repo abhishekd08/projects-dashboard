@@ -16,6 +16,7 @@ const startDateInput = document.getElementById('task-start-date');
 const startTimeInput = document.getElementById('task-start-time');
 const completedRow = document.getElementById('task-completed-row');
 const completedAtEl = document.getElementById('task-completed-at');
+let lastCardRect = null;
 
 // Initialize a simpler date picker for start date (Pikaday)
 if (startDateInput) {
@@ -34,15 +35,17 @@ function createTaskElement(task) {
   card.draggable = true;
   card.dataset.id = task.id;
 
-  // Small view by default (title and priority glyph)
+  // Small view by default (title + up to 2 lines of description) and priority glyph
+  const desc = task.description ? String(task.description) : '';
   card.innerHTML = `
-    <p class="task-title">${task.title}</p>
     ${priorityGlyph(task.priority)}
-    ${task.status === 'done' && task.end ? `<div style="margin-top:6px;color:#5e6c84;font-size:12px;">Completed ${task.end}</div>` : ''}
+    <p class="task-title">${task.title}</p>
+    ${desc ? `<p class="task-desc-preview">${desc}</p>` : ''}
+    ${task.status === 'done' && task.end ? `<div class="completed-footnote">Completed ${task.end}</div>` : ''}
   `;
 
   // Open detail modal instead of expanding
-  card.addEventListener('click', () => openTaskModal(task));
+  card.addEventListener('click', () => { lastCardRect = card.getBoundingClientRect(); openTaskModal(task); });
 
   // Drag and drop handlers
   card.addEventListener('dragstart', dragStart);
@@ -63,9 +66,9 @@ function statusDisplayName(status) {
 
 function priorityGlyph(priority) {
   const p = (priority || '').toLowerCase();
-  if (p === 'high') return `<span class="priority-glyph priority-high" title="High priority" aria-label="High priority">▲▲</span>`;
-  if (p === 'medium') return `<span class="priority-glyph priority-medium" title="Medium priority" aria-label="Medium priority">▲</span>`;
-  return `<span class="priority-glyph priority-low" title="Low priority" aria-label="Low priority">⎯⎯</span>`;
+  if (p === 'high') return `<span class="priority-glyph priority-high" title="High"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 10l4-6 4 6H4z"/><path d="M4 14l4-6 4 6H4z"/></svg></span>`;
+  if (p === 'medium') return `<span class="priority-glyph priority-medium" title="Medium"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 12l4-6 4 6H4z"/></svg></span>`;
+  return `<span class="priority-glyph priority-low" title="Low"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="6" width="10" height="2" rx="1"/><rect x="3" y="10" width="10" height="2" rx="1"/></svg></span>`;
 }
 
 // Drag and drop functions
@@ -155,6 +158,13 @@ function openTaskModal(task = null) {
     taskForm.reset();
     document.getElementById('task-id').value = '';
     document.getElementById('task-status').value = 'todo';
+    document.getElementById('task-priority').value = 'Low';
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const d = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+    const t = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    if (startDateInput) startDateInput.value = d;
+    if (startTimeInput) startTimeInput.value = t;
   }
 }
 
@@ -185,8 +195,8 @@ function fillForm(task) {
 
 // Save task to backend (create or update)
 async function saveTaskToBackend(task) {
-  if (!task.title || !task.priority || !task.status) {
-    alert('Title, Priority and Status are required');
+  if (!task.title) {
+    alert('Title is required');
     return;
   }
 
@@ -249,6 +259,13 @@ function combineStartDateTime() {
   return `${d}${t ? ' ' + t : ''}`.trim();
 }
 
+// ESC key closes modal
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !taskModal.classList.contains('hidden')) {
+    closeModal();
+  }
+});
+
 // Update filter tag options based on tasks
 function updateTagFilterOptions() {
   const allTags = new Set();
@@ -289,7 +306,7 @@ clearFilterBtn.addEventListener('click', () => {
 
 // Global add task button
 if (globalAddBtn) {
-  globalAddBtn.addEventListener('click', () => openTaskModal({ status: 'todo' }));
+  globalAddBtn.addEventListener('click', () => openTaskModal(null));
 }
 
 // Filter modal controls
